@@ -3,67 +3,62 @@ import java.io.*;
 
 public class server {
     public static void main(String[] args) throws IOException{
-        InputStreamReader in = null;
-        OutputStreamWriter out = null;
+        InputStreamReader inputStreamReader = null;
+        OutputStreamWriter outputStreamWriter = null;
         BufferedReader bufferedReader = null;;
         BufferedWriter bufferedWriter = null;
     
         Socket s = null;
         ServerSocket ss = new ServerSocket(5414);
+        System.out.println("Server Started on Port: " + ss.getLocalPort());
 
         while(true){
-            
             try{
                 s = ss.accept();
-                in = new InputStreamReader(s.getInputStream());
-                out = new OutputStreamWriter(s.getOutputStream());
+                System.out.println("Accepted connection from client " + s.getInetAddress());
 
-                bufferedReader = new BufferedReader(in);
-                bufferedWriter = new BufferedWriter(out);
+                inputStreamReader = new InputStreamReader(s.getInputStream());
+                outputStreamWriter = new OutputStreamWriter(s.getOutputStream());
+
+                bufferedReader = new BufferedReader(inputStreamReader);
+                bufferedWriter = new BufferedWriter(outputStreamWriter);
 
                 while(true){
                     //reading from client
                     String msgFromClient = bufferedReader.readLine();
                     System.out.println("Client: " + msgFromClient);
                     // this displays the command just sent
-                    bufferedWriter.write(msgFromClient);
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
                     
                     if(msgFromClient.startsWith("Joke")){
                         try{
-                            bufferedWriter.write("yes");
+                            bufferedWriter.write("this is where a joke would appear");
                         }
                         catch (IOException e) {
-                            bufferedWriter.write("Invalid Format");
+                            bufferedWriter.write("Invalid Format. Use Joke <1-3>");
                         }
                     }
-                    // ends client connection
                     else if(msgFromClient.equalsIgnoreCase("bye")){
                         break;
+                        // ends client connection
                     }
                     else{
-                        bufferedWriter.write("Invalid Completely");
+                        bufferedWriter.write("Invalid Format. Use Joke <number>");
                     }
                 }
-                // this happens on break
+
                 s.close(); // close socket
-                in.close(); 
-                out.close();
+                inputStreamReader.close(); 
+                outputStreamWriter.close();
                 bufferedReader.close();
                 bufferedWriter.close();
-                ss.close();
 
             }
             catch (IOException e){
                 e.printStackTrace();
             }
-
         }
-
-
-        //System.out.println("Client Connected");
-
-
-
-
     }
 }
+
