@@ -1,7 +1,11 @@
 import java.net.*;
 import java.io.*;
 
+
 public class server {
+    static DataOutputStream dataOutputStream = null;
+    static DataInputStream dataInputStream = null;
+
     public static void main(String[] args) throws IOException{
         // creating joke files
         try{
@@ -72,15 +76,46 @@ public class server {
                             outputToClient.println("Try numbers 1-3");
                     }
                     
-                    File jokeFile = new File(jokeFilename);
-                
+                    File jokeFile = new File("joke1.txt");
+
+                    outputToClient.println("joke1");
+                    // here is where we send the file
+                    FileInputStream fileInputStream = new FileInputStream(jokeFile);
+                    BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
                     
-                    BufferedReader jokeReader = new BufferedReader(new FileReader(jokeFile));
-                    String line;
-                    while ((line = jokeReader.readLine()) != null) {
-                        outputToClient.println(line);
+                    //socket output stream 
+                    OutputStream outputStream = clientSocket.getOutputStream(); //sockets output stream
+
+                    // read file contents into contents array
+                    byte[] contents;
+                    long fileLength = jokeFile.length();
+                    long current = 0;
+                    long start = System.nanoTime();
+                    while(current != fileLength){
+                        int size = 10000;
+                        if(fileLength - current >= size)
+                            current += size;
+                        else{
+                            size = (int)(fileLength - current);
+                            current = fileLength;
+                        }
+                        contents = new byte[size];
+                        bufferedInputStream.read(contents, 0, size);
+                        outputStream.write(contents);
+                        System.out.println("Sending file ... "+(current*100/fileLength+"% complete"));;
                     }
-                    jokeReader.close();
+                    outputStream.flush();
+                    System.out.println("File sent successfully");
+                    // BufferedReader jokeReader = new BufferedReader(new FileReader(jokeFile));
+                    // String line;
+                    // while ((line = jokeReader.readLine()) != null) {
+                    //     outputToClient.println(line);
+                    // }
+                    
+                    
+                    // jokeReader.close();
+
+                    
                 }
                 catch (Exception e){
                     outputToClient.println("Try Joke <number>");
@@ -101,7 +136,28 @@ public class server {
         System.out.println("Server Socket closed");
     
     }
+
+
+    private static void sendFile(String path) throws Exception{
+        int bytes = 0;
+        File file = new File(path);
+        FileInputStream fileInputStream = new FileInputStream(file);
+        
+        // send file size
+        dataOutputStream.writeLong(file.length());  
+        // break file into chunks
+        byte[] buffer = new byte[4*1024];
+        while ((bytes=fileInputStream.read(buffer))!=-1){
+            dataOutputStream.write(buffer,0,bytes);
+            dataOutputStream.flush();
+        }
+        fileInputStream.close();
+    }
+
 }
+
+
+
 
 
 
