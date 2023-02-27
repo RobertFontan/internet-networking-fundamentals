@@ -39,6 +39,9 @@ public class server {
                                     clientSocket.getOutputStream().write(buffer, 0, bytesRead);
                                 }
                                 fileIn.close();
+                                //
+                                System.out.println("BRUHH");
+                                out.println("File sent!");
                             } else {
                                 out.println("Error: Joke file not found");
                             }

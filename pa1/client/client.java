@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.rmi.ConnectIOException;
 
 public class client {
     public static void main(String[] args) {
@@ -34,26 +35,29 @@ public class client {
                 response = in.readLine();
                 
                 // Check if the server has closed the socket
-                if (command.equalsIgnoreCase("bye")) {
+                // if (command.equalsIgnoreCase("bye")) {
+                //     break;
+                // }
+                // if (command == null) {
+                //     continue;
+                //     //System.out.println("Server closed the connection.");
+                //     //break;
+                // }
+                // // Print the server's response
+                // if (response.startsWith("ERROR")) {
+                //     System.out.println("Server error: " + response);
+                // }
+                // if(response == null){
+                //     continue;
+                // } 
+                if(command.equalsIgnoreCase("bye"))
                     break;
-                }
-                if (command == null) {
-                    continue;
-                    //System.out.println("Server closed the connection.");
-                    //break;
-                }
-                // Print the server's response
-                if (response.startsWith("ERROR")) {
-                    System.out.println("Server error: " + response);
-                }
-                if(response == null){
-                    continue;
-                } 
-                else {
+                if(command.startsWith("Joke")) {
                     // Write the joke to a file
-                    String filename = "joke" + command.substring(5) + ".txt";
                     try{
+                        String filename = "joke" + command.substring(5) + ".txt";
                         receiveFile(inputStream, filename);
+                        
                     // try (PrintWriter writer = new PrintWriter(filename)) {
                     //     writer.println(response);
                         System.out.println("Joke saved to file: " + filename);
@@ -66,6 +70,12 @@ public class client {
                         e.printStackTrace();
                     }
                 }
+                else{
+                    System.out.println(response);
+                    continue;
+                }
+
+                
                 
                 // Check if the user wants to exit
                 
@@ -80,19 +90,24 @@ public class client {
     }
 
     public static void receiveFile(InputStream inputStream, String fileName) throws IOException{
-         
+        System.out.println("1");
         // Get socket input stream and read file
         byte[] buffer = new byte[1024];
         int bytesRead;
         FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+        System.out.println("2");
         while ((bytesRead = inputStream.read(buffer)) != -1) {
             fileOutputStream.write(buffer, 0, bytesRead);
+            fileOutputStream.flush();
+            System.out.println(buffer);
         }
-             
+        System.out.println("3");
+
         // Write file contents to disk
         //FileOutputStream fos = new FileOutputStream(fileName);
         fileOutputStream.close();
-        inputStream.close();
+        System.out.println("4");
+        //inputStream.close();
         //baos.close();
              
         // Close streams and socket

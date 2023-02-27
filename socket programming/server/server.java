@@ -61,6 +61,7 @@ public class server {
             if(message == null)
                 continue;
             if(message.contains("Joke")){
+                outputToClient.println("Sending Joke File");
                 sendFile("joke1.txt", outputToClient, outputStream);
                 // joke file time                
             }
@@ -80,10 +81,11 @@ public class server {
     }
 
 
-    private static void sendFile(String fileName, PrintWriter outputToClient, OutputStream out) throws IOException{
+    private static void sendFile(String fileName, PrintWriter outputToClient, OutputStream outputStream) throws IOException{
         File file = new File(fileName);
         FileWriter joke1 = new FileWriter(file);
         joke1.write("What do they call a group of network engineers? An outage. ");
+//        joke1.flush();
         joke1.close();
 
         if (!file.exists()) {
@@ -95,17 +97,19 @@ public class server {
         byte[] buffer = new byte[1024];
         int bytesRead;
         while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-            out.write(buffer, 0, bytesRead);
+            outputStream.write(buffer, 0, bytesRead);
         }
         fileInputStream.close();
-        out.flush();
+        outputStream.flush();
 
         // this reads the joke out
         BufferedReader fileReader = new BufferedReader(new FileReader(file));
         String line;        
+        
         while ((line = fileReader.readLine()) != null) {
             outputToClient.println(line);
         }
+
         fileReader.close();
     }
 
