@@ -2,6 +2,8 @@ import java.io.*;
 import java.net.*;
 
 public class server {
+    private static DataOutputStream dataOutputStream = null;
+    private static DataInputStream dataInputStream = null;
 
     private static final int PORT = 1234;
     private static final String[] JOKE_FILENAMES = {"joke1.txt", "joke2.txt", "joke3.txt"};
@@ -14,6 +16,8 @@ public class server {
             
             while (true) {
                 Socket clientSocket = serverSocket.accept();
+                dataInputStream = new DataInputStream(clientSocket.getInputStream());
+            dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
                 System.out.println("Accepted incoming connection from " + clientSocket.getInetAddress());
                 
                 // Send initial "Hello!" message to client
@@ -22,37 +26,29 @@ public class server {
                 
                 // Receive command from client and respond accordingly
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                String command;
-                while ((command = in.readLine()) != "bye") {
+                String command = "";
+                while (true) {
+                    command = in.readLine();
                     System.out.println("Received command from client: " + command);
-                    if (command.startsWith("Joke ")) {
-                        int jokeNum = Integer.parseInt(command.substring(5));
-                        if (jokeNum >= 1 && jokeNum <= JOKE_FILENAMES.length) {
-                            String jokeFilename = JOKE_FILENAMES[jokeNum - 1];
-                            File jokeFile = new File(jokeFilename);
-                            if (jokeFile.exists() && jokeFile.isFile()) {
-                                // Send joke file to client
-                                FileInputStream fileIn = new FileInputStream(jokeFile);
-                                byte[] buffer = new byte[4096];
-                                int bytesRead;
-                                while ((bytesRead = fileIn.read(buffer)) != -1) {
-                                    clientSocket.getOutputStream().write(buffer, 0, bytesRead);
-                                }
-                                fileIn.close();
-                                //
-                                System.out.println("BRUHH");
-                                out.println("File sent!");
-                            } else {
-                                out.println("Error: Joke file not found");
+                        
+                    if(command == null){
+                        continue;
+                    }
+                    if (command.equals("Joke 1") || command.equals("Joke 2") || command.equals("Joke 3")) {
+                            int jokeNum = Integer.parseInt(command.substring(5));
+                            if (jokeNum >= 1 && jokeNum <= JOKE_FILENAMES.length) {
+                                String jokeFilename = JOKE_FILENAMES[jokeNum - 1];
+                                sendFile(jokeFilename);
+                                System.out.println("BUV");
                             }
-                        } else {
-                            out.println("Error: Invalid joke number");
-                        }
-                    } else if (command.equals("bye")) {
-                        // Close socket on "bye" command
-                        clientSocket.close();
-                        break;
-                    } else {
+                            else {
+                                out.println("Error: Invalid joke number");
+                            }
+                    }             
+                     
+                    
+                   
+                    else { //this happens on null
                         out.println("Error: Invalid command");
                     }
                 }
@@ -95,7 +91,36 @@ public class server {
     }
 
 
+    private static void sendFile(String path) throws IOException {
+        File file = new File(path);
+        if (!file.exists() || !file.isFile()) {
+            throw new FileNotFoundException("File not found or is not a file: " + path);
+        }
     
+        FileInputStream fileInputStream = new FileInputStream(file);
+    
+        try {
+            long fileSize = file.length();
+            dataOutputStream.writeLong(fileSize);
+    
+            byte[] buffer = new byte[1024 * 64]; // 64 KB buffer size
+            int bytesRead;
+            long bytesSent = 0;
+    
+            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+                dataOutputStream.write(buffer, 0, bytesRead);
+                bytesSent += bytesRead;
+            }
+    
+            if (bytesSent != fileSize) {
+                throw new IOException("Could not send entire file: " + path);
+            }
+    
+            dataOutputStream.flush();
+        } finally {
+            fileInputStream.close();
+        }
+    }
 
 }
 
