@@ -1,6 +1,6 @@
 import java.io.*;
 import java.net.*;
-import java.rmi.ConnectIOException;
+import java.util.Arrays;
 
 public class client {
     public static void main(String[] args) {
@@ -89,28 +89,32 @@ public class client {
         }
     }
 
-    public static void receiveFile(InputStream inputStream, String fileName) throws IOException{
-        System.out.println("1");
-        // Get socket input stream and read file
+    public static void receiveFile(InputStream inputStream, String fileName) throws IOException {
         byte[] buffer = new byte[1024];
         int bytesRead;
         FileOutputStream fileOutputStream = new FileOutputStream(fileName);
-        System.out.println("2");
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            fileOutputStream.write(buffer, 0, bytesRead);
-            fileOutputStream.flush();
-            System.out.println(buffer);
+    
+        try {
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                fileOutputStream.write(buffer, 0, bytesRead);
+                fileOutputStream.flush();
+                //System.out.println(buffer.toString());
+                String str = Arrays.toString(buffer);
+                String[] strArr = str.substring(1, str.length() - 1).split(", ");
+                for (String s : strArr) {
+                    System.out.print(s);
+                    if(s.endsWith("0")){
+                        System.out.println("Mathc");
+                        return;
+                    }
+                }
+                
+                //System.out.println(Arrays.toString(buffer)); // Print buffer contents as an array
+            }
+        } finally {
+            // Close resources in a finally block to ensure they are always closed
+            fileOutputStream.close();
+            inputStream.close();
         }
-        System.out.println("3");
-
-        // Write file contents to disk
-        //FileOutputStream fos = new FileOutputStream(fileName);
-        fileOutputStream.close();
-        System.out.println("4");
-        //inputStream.close();
-        //baos.close();
-             
-        // Close streams and socket
-        
     }
 }
