@@ -7,15 +7,8 @@ import javax.imageio.ImageIO;
 
 
 public class tcp_server {
-
-    static String joke1 = "Why do programmers prefer dark mode? Because light attracts bugs.";
-    static String joke2 = "Why did the programmer quit his job? He didn't get arrays.";
-    static String joke3 = "What's the object-oriented way to become wealthy? Inheritance.";
-
-
     public static void main(String[] args) {
         try {
-
             int PORT = 5414;
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Server started on port " + PORT);
@@ -39,13 +32,11 @@ public class tcp_server {
             }
 
             clientSocket.shutdownOutput();
-            serverSocket.close();
-
-                
-        } catch (IOException e) {
+            serverSocket.close();       
+        } 
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }
 
