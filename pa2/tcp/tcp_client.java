@@ -20,6 +20,8 @@ public class tcp_client {
         String serverURL = "localhost";
         int port = 5414;
 
+        // Measurements
+        long beginTime, endTime, totalTime;
 
         try {
             System.out.println("Connecting to " + serverURL + " on port " + port);
@@ -28,6 +30,7 @@ public class tcp_client {
             
             
             for (int i = 1; i <= 10; i++) {
+                beginTime = System.currentTimeMillis();
                 DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
                 int length = dataInputStream.readInt();
                 byte[] buffer = new byte[length];
@@ -35,11 +38,12 @@ public class tcp_client {
                 
                 BufferedImage image = ImageIO.read(new ByteArrayInputStream(buffer));
                 ImageIO.write(image, "png", new File("received_sample" + i + ".png"));
-                
-                System.out.println("Image " + i + " received from server and saved to file.");
+                endTime = System.currentTimeMillis();
+                //System.out.println("Image " + i + " received from server and saved to file.");
                 //clientSocket.shutdownInput();
                 //dataInputStream.close();
-
+                totalTime = endTime - beginTime;
+                System.out.println("Time to download image " + i + ": " + totalTime + "ms");
             }
             clientSocket.shutdownInput();            
             clientSocket.close();    
