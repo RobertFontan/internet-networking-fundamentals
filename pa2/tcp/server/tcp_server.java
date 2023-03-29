@@ -12,25 +12,27 @@ import java.util.Random;
 
 public class tcp_server {
     public static void main(String[] args) {
-
+        // Input validation
         if(args.length != 1){
             System.out.println("java tcp_server.java <port>");
             return;
         }
         int PORT = Integer.parseInt(args[0]);
-
+        
+        // Getting random int 
         Random rand = new Random();
         int upper = 10;
         int int_rand = rand.nextInt(upper); // 0 - 9
         List<Integer> prev = new ArrayList<Integer>();
 
         // Measurements
-        long beginAccess, endAccess, totalAccessTime;
+        long beginAccess, endAccess, totalAccessTime; // #3
         
         //Summary Statistics
         List<Integer> accessTimeList = new ArrayList<Integer>();
 
         try {
+            // Displaying socket info
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Server started on port " + PORT);
             System.out.println("Server on: " + serverSocket.getInetAddress());
@@ -42,17 +44,18 @@ public class tcp_server {
                 
                 prev.add(int_rand);
 
-                beginAccess = System.currentTimeMillis();
+                beginAccess = System.currentTimeMillis(); // Measurement
+                // Read the file and convert to byte array
                 BufferedImage image = ImageIO.read(new File("./images/sample" + int_rand + ".png"));
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 ImageIO.write(image, "png", outputStream);
                 byte[] buffer = outputStream.toByteArray();
-                
+                // Send the byte array to the client through the socket
                 DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
                 dataOutputStream.writeInt(buffer.length);
                 dataOutputStream.write(buffer, 0, buffer.length);
-                endAccess = System.currentTimeMillis();
-                totalAccessTime = endAccess - beginAccess;
+                endAccess = System.currentTimeMillis(); // Measurement
+                totalAccessTime = endAccess - beginAccess; // Measurement
                 accessTimeList.add((int)totalAccessTime);
                 dataOutputStream.flush();
                 
@@ -67,7 +70,7 @@ public class tcp_server {
                 }
 
             }
-
+            // Display stats
             DoubleSummaryStatistics stats = calculateStats(accessTimeList);
 
             System.out.println("Minimum: " + stats.getMin() + "ms");
@@ -89,7 +92,7 @@ public class tcp_server {
         }
     }
     public static DoubleSummaryStatistics calculateStats(List<Integer> intList) {
-        // Calculate summary statistics using Java 8 Stream API
+        // Calculate summary statistics 
         DoubleSummaryStatistics stats = intList.stream().mapToDouble(Integer::intValue).summaryStatistics();
         return stats;
     }

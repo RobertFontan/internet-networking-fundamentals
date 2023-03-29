@@ -31,7 +31,7 @@ public class udp_server {
         List<Integer> accessTimeList = new ArrayList<Integer>();
 
 
-
+        // Connection socket
         DatagramSocket socket = new DatagramSocket(port);
         byte[] buf = new byte[256];
         System.out.println("Waiting for client connection in port " + port + "...");
@@ -46,8 +46,8 @@ public class udp_server {
             return;
         }
 
+        // Socket information
         System.out.println("Client connected. Sending images...");
-
         InetAddress clientAddress = connectionPacket.getAddress();
         int clientPort = connectionPacket.getPort();
 
@@ -56,14 +56,14 @@ public class udp_server {
 
             String fileName = "images/sample" + int_rand + ".png";
 
-            beginAccess = System.currentTimeMillis();
+            beginAccess = System.currentTimeMillis(); // Measurement
             byte[] imageData = Files.readAllBytes(Paths.get(fileName));
-
+            // Write image data to byte array output stream
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream dos = new DataOutputStream(baos);
             dos.writeInt(imageData.length);
             dos.write(imageData);
-            endAccess = System.currentTimeMillis();
+            endAccess = System.currentTimeMillis(); // Measurement
 
             totalAccessTime = endAccess - beginAccess;
             int toAdd = (int)totalAccessTime;
@@ -73,11 +73,10 @@ public class udp_server {
 
             int offset = 0;
             int packetSize = 1024;
-            // dataToSend.length = 170148
+            // Send data in packets with max size of 1024 bytes
             while (offset < dataToSend.length) {
                 int bytesToSend = Math.min(packetSize, dataToSend.length - offset);
                 byte[] buffer = new byte[bytesToSend];
-                //System.out.println(offset);
                 System.arraycopy(dataToSend, offset, buffer, 0, bytesToSend);
                 DatagramPacket packet = new DatagramPacket(buffer, bytesToSend, clientAddress, clientPort);
                 socket.send(packet);
@@ -97,10 +96,10 @@ public class udp_server {
                 if(i == 10){
                     break;
                 }
-                //System.out.println(i);
             }
 
         }
+        // Display summary stats
         DoubleSummaryStatistics stats = calculateStats(accessTimeList);
         
         System.out.println("Minimum: " + stats.getMin() + "ms");
@@ -115,11 +114,10 @@ public class udp_server {
         System.out.println("Standard deviation: " + stdDev + "ms");
 
         
-        //socket.close();
     }
 
     public static DoubleSummaryStatistics calculateStats(List<Integer> intList) {
-        // Calculate summary statistics using Java 8 Stream API
+        // Calculate summary statistics 
         DoubleSummaryStatistics stats = intList.stream().mapToDouble(Integer::intValue).summaryStatistics();
         return stats;
     }

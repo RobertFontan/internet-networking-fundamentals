@@ -34,26 +34,23 @@ public class udp_client {
         
         // Send connection message to the server
         byte[] buf = "CONNECT".getBytes();
-        beginConnection = System.currentTimeMillis();
-        //InetAddress serverAddress = InetAddress.getByName("localhost");
+        beginConnection = System.currentTimeMillis(); // Measurement
         InetAddress serverAddress = InetAddress.getByName(serverURL);
-        
-        endConnection = System.currentTimeMillis();
+        endConnection = System.currentTimeMillis(); // Measurement
         totalConnectionTime = endConnection - beginConnection;
+
+        //Display socket information
         System.out.println("Connected to " + serverAddress + " in: " + totalConnectionTime + "ms");
-        //DatagramPacket connectionPacket = new DatagramPacket(buf, buf.length, serverAddress, 8888);
         DatagramPacket connectionPacket = new DatagramPacket(buf, buf.length, serverAddress, port);
         socket.send(connectionPacket);
 
         for (int i = 1; i <= 10; i++) {
-         
-
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             int expectedSize = -1;
             int totalBytesRead = 0;
 
-
-            beginTime = System.currentTimeMillis();
+            beginTime = System.currentTimeMillis(); // Measurement
+            // Loop until image data is received and assembled correctly
             while (true) 
             {
                 byte[] buffer = new byte[1024];
@@ -63,7 +60,7 @@ public class udp_client {
                 int bytesRead = packet.getLength();
                 baos.write(buffer, 0, bytesRead);
                 totalBytesRead += bytesRead;
-
+                // If expected and correct amount
                 if (expectedSize == -1 && totalBytesRead >= 4) {
                     expectedSize = ByteBuffer.wrap(baos.toByteArray(), 0, 4).getInt();
                 }
@@ -79,11 +76,13 @@ public class udp_client {
                     break;
                 }
             }
-            endTime = System.currentTimeMillis();
+            // Calculations for total time
+            endTime = System.currentTimeMillis(); // Measurement
             totalTime = endTime - beginTime;
             totalTimeList.add((int)totalTime);
             System.out.println("Time to download the " + i + " image: " + totalTime + "ms");
         }
+        // Display summary statistics
         DoubleSummaryStatistics stats = calculateStats(totalTimeList);
         
         System.out.println("Minimum: " + stats.getMin() + "ms");
@@ -102,7 +101,7 @@ public class udp_client {
 
 
     public static DoubleSummaryStatistics calculateStats(List<Integer> intList) {
-        // Calculate summary statistics using Java 8 Stream API
+        // Calculate summary statistics
         DoubleSummaryStatistics stats = intList.stream().mapToDouble(Integer::intValue).summaryStatistics();
         return stats;
     }

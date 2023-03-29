@@ -32,15 +32,15 @@ public class tcp_client {
         try {
             // Socket information
             System.out.println("Connecting to " + serverURL + " on port " + port);
-            beginConnection = System.currentTimeMillis();
+            beginConnection = System.currentTimeMillis(); // Measurement
             Socket clientSocket = new Socket(serverURL, port);
-            endConnection = System.currentTimeMillis();
-            totalConnectionTime = endConnection - beginConnection; //measurement #2
+            endConnection = System.currentTimeMillis(); // Measurement
+            totalConnectionTime = endConnection - beginConnection; 
             System.out.println("Connected to " + clientSocket.getRemoteSocketAddress() + " in: " + totalConnectionTime + "ms ");
             
             // getting all 10 images
             for (int i = 1; i <= 10; i++) {
-                beginTime = System.currentTimeMillis();
+                beginTime = System.currentTimeMillis(); // Measurement
                 DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
                 int length = dataInputStream.readInt();
                 byte[] buffer = new byte[length];
@@ -48,7 +48,7 @@ public class tcp_client {
                 
                 BufferedImage image = ImageIO.read(new ByteArrayInputStream(buffer));
                 ImageIO.write(image, "png", new File("./received/received_sample" + i + ".png"));
-                endTime = System.currentTimeMillis();
+                endTime = System.currentTimeMillis(); // Measurement
                 totalTime = endTime - beginTime;
                 totalTimeList.add((int)totalTime);
                 System.out.println("Time to download the " + i + " image: " + totalTime + "ms");
