@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 
+
 /* -- Removes all received files
  * rm *received* 
  * 
@@ -37,7 +38,7 @@ public class tcp_client {
                 dataInputStream.readFully(buffer, 0, length);
                 
                 BufferedImage image = ImageIO.read(new ByteArrayInputStream(buffer));
-                ImageIO.write(image, "png", new File("received_sample" + i + ".png"));
+                ImageIO.write(image, "png", new File("./received/received_sample" + i + ".png"));
                 endTime = System.currentTimeMillis();
                 //System.out.println("Image " + i + " received from server and saved to file.");
                 //clientSocket.shutdownInput();
