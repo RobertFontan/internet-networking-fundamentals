@@ -5,8 +5,19 @@ import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import java.util.*;
+
+
 public class udp_server {
     public static void main(String[] args) throws IOException {
+
+        //Random
+        Random rand = new Random();
+        int upper = 9;
+        int int_rand = rand.nextInt(upper); // 0 - 9
+        List<Integer> prev = new ArrayList<Integer>();
+
+
         DatagramSocket socket = new DatagramSocket(8888);
         byte[] buf = new byte[256];
 
@@ -28,9 +39,11 @@ public class udp_server {
         int clientPort = connectionPacket.getPort();
 
         for (int i = 1; i <= 10; i++) {
-            System.out.println("Attempting image " + i);
+            prev.add(int_rand);
 
-            String fileName = "images/sample" + i + ".png";
+            System.out.println("Attempting image " + int_rand);
+
+            String fileName = "images/sample" + int_rand + ".png";
             byte[] imageData = Files.readAllBytes(Paths.get(fileName));
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -55,11 +68,16 @@ public class udp_server {
                 
             }
             try {
-                Thread.sleep(1000);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println("Image " + i + " sent");
+            System.out.println("Image " + int_rand + " sent");
+
+            while(prev.contains(int_rand)){
+                int_rand = rand.nextInt(upper);
+            }
+
         }
         socket.close();
     }

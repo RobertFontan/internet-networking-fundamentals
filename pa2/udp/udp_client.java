@@ -10,6 +10,11 @@ public class udp_client {
     public static void main(String[] args) throws IOException {
         DatagramSocket socket = new DatagramSocket(9999);
 
+        //Measurements
+        long beginTime, endTime, totalTime;
+
+        
+
         // Send connection message to the server
         byte[] buf = "CONNECT".getBytes();
         InetAddress serverAddress = InetAddress.getByName("localhost");
@@ -17,17 +22,14 @@ public class udp_client {
         socket.send(connectionPacket);
 
         for (int i = 1; i <= 10; i++) {
-            // ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            // byte[] buffer = new byte[1024];
-            // int totalBytesRead = 0;
-            // int bytesRead;
+         
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             int expectedSize = -1;
             int totalBytesRead = 0;
 
 
-
+            beginTime = System.currentTimeMillis();
             while (true) 
             {
                 byte[] buffer = new byte[1024];
@@ -48,13 +50,16 @@ public class udp_client {
 
                     ByteArrayInputStream imageBais = new ByteArrayInputStream(imageData);
                     BufferedImage image = ImageIO.read(imageBais);
-                    ImageIO.write(image, "png", new File("received_image" + i + ".png"));
+                    ImageIO.write(image, "png", new File("./received/received_image" + i + ".png"));
 
                     break;
                 }
             }
+            endTime = System.currentTimeMillis();
+            totalTime = endTime - beginTime;
+            System.out.println("Time to download image " + i + ": " + totalTime + "ms");
 
-            System.out.println("Image " + i + " recieved");
+            //System.out.println("Image " + i + " recieved");
 
         }
         socket.close();
