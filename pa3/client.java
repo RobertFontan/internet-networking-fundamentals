@@ -48,17 +48,31 @@ public class client {
 
             while (true) {
             
-                try{
-                    command = userInput.readLine();
-                    out.println(command);
-                    String response = in.readLine();
+                command = userInput.readLine();
+                out.println(command);
+                String response = in.readLine();
+
+                if(command.equalsIgnoreCase("bye")){
+                    System.out.println("disconnected goodbye!");
+                    break;
                 }
-                catch (Exception e){
-                    System.out.println("Invalid after Joke, try putting a number.");
-                }                   
+                else{
+                    System.out.println(response);
+                    continue;
+                }
+
+                // try{
+                //     command = userInput.readLine();
+                //     out.println(command);
+                //     String response = in.readLine();
+
+                // }
+                // catch (Exception e){
+                //     System.out.println("Invalid after Joke, try putting a number.");
+                // }                   
             }
-            //clientSocket.close();
-            //System.out.println("Connection closed.");
+            clientSocket.close();
+            System.out.println("Connection closed.");
         } catch (IOException e) {
             e.printStackTrace();
         }
