@@ -28,34 +28,38 @@ public class server {
             String command = "";
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-             out.print("Wall Contents \n -------------");
-             while (true){
-                command = in.readLine();
-                System.out.println("Received Command from Client: "  + command);
-                
-                if(!command.isBlank()){
-                    out.println("we did it joe");
-                }
-                else{
-                    out.println("invalid command");
-                }
-
-                    // if(command.equals("post")){
-                //     System.out.print("post detected");
-                // }
-                // else if(command.equals("clear")){
-                //     System.out.print("clear detected");
-                // }
-                // else if(command.equals("quit")){
-                //     System.out.print("quit detected");
-                // }
-                // else if(command.equals("kill")){
-                //     System.out.print("kill detected");
-                // }
-                // else{
-                //     System.out.println("invalid command");
-                // }
-            }
+            out.print("Wall Contents \n -------------");
+            while (!isKill){
+                // we should init here 
+                                
+                //do {
+                    command = in.readLine();
+                    System.out.println("Received Command from Client: "  + command);
+                    
+                    if(!command.isBlank()){
+                        if(command.equals("post")){
+                            // save and display posts 
+                            out.println("post detected");
+                        }
+                        else if(command.equals("quit")){
+                            out.println("quit detected");
+                        }
+                        else if(command.equals("clear")){
+                            out.println("clear detected");
+                        }
+                        else if(command.equals("kill")){
+                            out.println("kill detected");
+                            isKill = true;
+                        }
+                        else{
+                            out.println("invalid command");
+                        }
+                    }
+                    else{
+                        out.println("well you should type something...");
+                    }
+                //} while(!isKill);
+            } 
         } catch (IOException e) {
             e.printStackTrace();
         }

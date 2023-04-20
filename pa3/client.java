@@ -8,6 +8,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import javax.swing.plaf.synth.SynthStyle;
+
 
 public class client {
     
@@ -45,34 +47,31 @@ public class client {
             // Prompt the user for a joke command
             BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
             String command = "";
+      
 
-            while (true) {
-            
+            boolean isQuit = false;
+            while (!isQuit) {
+                
                 command = userInput.readLine();
                 out.println(command);
-                String response = in.readLine();
 
+                String response = in.readLine();                
                 if(command.equalsIgnoreCase("bye")){
                     System.out.println("disconnected goodbye!");
                     break;
                 }
+                else if(command.equalsIgnoreCase("quit")){
+                    System.out.println("quit found");
+                    break;
+                }
                 else{
-                    System.out.println(response);
+                    System.out.println(response);                    
+                    //System.out.println("response");
                     continue;
                 }
-
-                // try{
-                //     command = userInput.readLine();
-                //     out.println(command);
-                //     String response = in.readLine();
-
-                // }
-                // catch (Exception e){
-                //     System.out.println("Invalid after Joke, try putting a number.");
-                // }                   
             }
             clientSocket.close();
-            System.out.println("Connection closed.");
+            //System.out.println("Connection closed.");
         } catch (IOException e) {
             e.printStackTrace();
         }
