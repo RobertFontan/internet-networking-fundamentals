@@ -14,18 +14,15 @@ public class client {
     
 
     public static void main(String[] args) {
-// public static void main(String [] args){}
         // check command line arguments
-        // if (args.length != 1) {
-        //     System.err.println("java client < number>");
-        //     return;
-        // }
+        if (args.length != 2) {
+            System.err.println("java client <serverURL> <port>");
+            return;
+        }
 
         // get server name and port number from command line arguments
-        String serverURL = "localhost";
-        //serverURL = "localhost";
-        //int port = Integer.parseInt(args[0]);
-        int port = 1234;
+        String serverURL = args[0];
+        int port = Integer.parseInt(args[1]);
 
 
 
@@ -37,55 +34,49 @@ public class client {
             // Create input and output streams for the socket
             InputStream inputStream = clientSocket.getInputStream();
             OutputStream outputStream = clientSocket.getOutputStream();
-            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream)); //reads server response
             PrintWriter out = new PrintWriter(outputStream, true);
-            
-            
-            // Read and print the server's response
-            
-            // Prompt the user for a joke command
             BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
-            String command = "";
+            String command = ""; // command to send to server
       
 
             boolean isQuit = false;
-            // while(in.readLine() != null){
-            //     System.out.println(in.readLine());
-            // }
+           
 
             System.out.println("Welcome to the Bulletin Board!");
+            // Idea for a menu
             // "\nType post to add your message" + 
             // "\nType display to show current messages" + 
             // "\nType clear to empty the wall" +
             // "\nType kill to close the server" + 
             // "\nType quit to close the client");
 
+
             while (!isQuit) {
-                
                 command = userInput.readLine();
                 out.println(command);
 
-                //String response = in.readLine();                }
                 if(command.equalsIgnoreCase("quit")){
                     System.out.println("Disconnecting Client.");
                     break;
                 }
+                else if(command.equalsIgnoreCase("kill")){
+                    System.out.println(in.readLine());
+                    break;
+                }
                 else if(command.equalsIgnoreCase("display")){
-                    int postsSize = Integer.parseInt(in.readLine());
-                    
-
+                    int postsSize = Integer.parseInt(in.readLine()); // first reads how many posts are in list
                     if(postsSize == 0){
-                        System.out.println("Wall is empty! Try posting something!");
+                        System.out.println("Wall is empty! Try posting something!"); // if empty display this
                     }
                     else{
-                        System.out.println("Bulletin Board: ");
+                        System.out.println("\n--- Bulletin Board --- \n"); 
                     }
-
-
-                    // this idk
+                    // priting entire post line from server
                     for(int i = 0; i < postsSize; i++){
                         System.out.println(in.readLine());
                     }
+                    System.out.print("\n");
                     continue;
                 }
                 else{
@@ -93,7 +84,7 @@ public class client {
                     continue;
                 }
             }
-            clientSocket.close();
+            clientSocket.close(); //if quit is done (at top of while) goes to this quitting client socket
         } catch (IOException e) {
             e.printStackTrace();
         }
