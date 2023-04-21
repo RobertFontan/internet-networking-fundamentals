@@ -1,6 +1,6 @@
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+// import java.io.BufferedWriter;
+// import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -8,25 +8,24 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import javax.swing.plaf.synth.SynthStyle;
 
 
 public class client {
     
 
     public static void main(String[] args) {
-
+// public static void main(String [] args){}
         // check command line arguments
-        if (args.length != 1) {
-            System.err.println("java client <port number>");
-            return;
-        }
+        // if (args.length != 1) {
+        //     System.err.println("java client < number>");
+        //     return;
+        // }
 
         // get server name and port number from command line arguments
         String serverURL = "localhost";
         //serverURL = "localhost";
-        int port = Integer.parseInt(args[0]);
-       
+        //int port = Integer.parseInt(args[0]);
+        int port = 1234;
 
 
 
@@ -50,28 +49,51 @@ public class client {
       
 
             boolean isQuit = false;
+            // while(in.readLine() != null){
+            //     System.out.println(in.readLine());
+            // }
+
+            System.out.println("Welcome to the Bulletin Board!");
+            // "\nType post to add your message" + 
+            // "\nType display to show current messages" + 
+            // "\nType clear to empty the wall" +
+            // "\nType kill to close the server" + 
+            // "\nType quit to close the client");
+
             while (!isQuit) {
                 
                 command = userInput.readLine();
                 out.println(command);
 
-                String response = in.readLine();                
-                if(command.equalsIgnoreCase("bye")){
-                    System.out.println("disconnected goodbye!");
+                //String response = in.readLine();                }
+                if(command.equalsIgnoreCase("quit")){
+                    System.out.println("Disconnecting Client.");
                     break;
                 }
-                else if(command.equalsIgnoreCase("quit")){
-                    System.out.println("quit found");
-                    break;
+                else if(command.equalsIgnoreCase("display")){
+                    int postsSize = Integer.parseInt(in.readLine());
+                    
+
+                    if(postsSize == 0){
+                        System.out.println("Wall is empty! Try posting something!");
+                    }
+                    else{
+                        System.out.println("Bulletin Board: ");
+                    }
+
+
+                    // this idk
+                    for(int i = 0; i < postsSize; i++){
+                        System.out.println(in.readLine());
+                    }
+                    continue;
                 }
                 else{
-                    System.out.println(response);                    
-                    //System.out.println("response");
+                    System.out.println(in.readLine());
                     continue;
                 }
             }
             clientSocket.close();
-            //System.out.println("Connection closed.");
         } catch (IOException e) {
             e.printStackTrace();
         }
