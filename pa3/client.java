@@ -43,13 +43,32 @@ public class client {
             boolean isQuit = false;
            
 
-            System.out.println("Welcome to the Bulletin Board!");
-            // Idea for a menu
-            // "\nType post to add your message" + 
-            // "\nType display to show current messages" + 
-            // "\nType clear to empty the wall" +
-            // "\nType kill to close the server" + 
-            // "\nType quit to close the client");
+            // System.out.println("Welcome to the Bulletin Board!");
+          
+            String asciiArt =         " ____          _  _        _    _          ____                           _ \n" +
+                                      "|  _ \\        | || |      | |  (_)        |  _ \\                         | |\n" +
+                                      "| |_) | _   _ | || |  ___ | |_  _  _ __   | |_) |  ___    __ _  _ __   __| |\n" +
+                                      "|  _ < | | | || || | / _ \\| __|| || '_ \\  |  _ < / _ \\  / _` || '__| / _` |\n" +
+                                      "| |_) || |_| || || ||  __/| |_ | || | | | | |_) || (_) || (_| || |   | (_| |\n" +
+                                      "|____/  \\__,_||_||_| \\___| \\__||_||_| |_| |____/ \\___/  \\__,_||_|    \\__,_|\n" +
+                                      "                                                                            \n" +
+                                      "                                                                            \n";
+            
+            
+            System.out.println(asciiArt);
+
+            String menu = "-- Avaliable Commands --\n"+
+                          "new - add a thread\n" +
+                          "post - add your message to thread\n" +
+                          "display - show current messages \n" +
+                          "clear - empty a thread\n" +
+                          "delete - delete a thread\n"+
+                          "kill - close the server\n" +
+                          "quit - close the client\n" +
+                          "help - show this message again\n";
+
+            System.out.println(menu);
+            
 
 
             while (!isQuit) {
@@ -60,24 +79,108 @@ public class client {
                     System.out.println("Disconnecting Client.");
                     break;
                 }
+                else if(command.equalsIgnoreCase("help")){
+                    System.out.println(menu);
+                    continue;
+                }
+                else if(command.equalsIgnoreCase("post")){
+                    int threadSize = Integer.parseInt(in.readLine());
+                    if(threadSize == 0){
+                        System.out.println("No threads found, try adding one!");
+                    }
+                    else{
+                        System.out.println("Choose one to post below");
+
+                        System.out.println("\n--- Open Threads ---\n");
+                        for(int j = 0; j < threadSize; j++){
+                            System.out.println(in.readLine());
+                        }
+                        System.out.print("\n");
+                        command = userInput.readLine(); // sending index
+                        out.println(command);  // showing index
+
+                        System.out.println(in.readLine());
+                        continue;
+                    }
+                }
                 else if(command.equalsIgnoreCase("kill")){
                     System.out.println(in.readLine());
                     break;
                 }
                 else if(command.equalsIgnoreCase("display")){
-                    int postsSize = Integer.parseInt(in.readLine()); // first reads how many posts are in list
-                    if(postsSize == 0){
-                        System.out.println("Wall is empty! Try posting something!"); // if empty display this
+                    // read how many threads there are
+                    int threadSize = Integer.parseInt(in.readLine());
+                    if(threadSize == 0){
+                        System.out.println("No threads found, try adding one!");
                     }
                     else{
-                        System.out.println("\n--- Bulletin Board --- \n"); 
+                        System.out.println("Choose one to display below");
+
+                        System.out.println("\n--- Open Threads ---\n");
+                        for(int j = 0; j < threadSize; j++){
+                            System.out.println(in.readLine());
+                        }
+                        System.out.print("\n");
+                        command = userInput.readLine(); // sending index
+                        out.println(command);  // showing index
+                        //System.out.println(in.readLine()); // reading one
+
+                        int postsSize = Integer.parseInt(in.readLine()); // first reads how many posts are in list
+                        if(postsSize == 0){
+                            System.out.println("Wall is empty! Try posting something!"); // if empty display this
+                        }
+                        else{
+                            System.out.println("\n--- Bulletin Board --- \n"); 
+                        }
+                        // priting entire post line from server
+                        for(int i = 0; i < postsSize; i++){
+                            System.out.println(in.readLine());
+                        }
+                        
                     }
-                    // priting entire post line from server
-                    for(int i = 0; i < postsSize; i++){
-                        System.out.println(in.readLine());
-                    }
+
                     System.out.print("\n");
                     continue;
+                }
+                else if(command.equalsIgnoreCase("clear")){
+                    int threadSize = Integer.parseInt(in.readLine());
+                    if(threadSize == 0){
+                        System.out.println("No threads found, try adding one!");
+                    }
+                    else{
+                        System.out.println("Choose one to clear below");
+
+                        System.out.println("\n--- Open Threads ---\n");
+                        for(int j = 0; j < threadSize; j++){
+                            System.out.println(in.readLine());
+                        }
+                        System.out.print("\n");
+                        command = userInput.readLine(); // sending index
+                        out.println(command);  // showing index
+
+                        System.out.println(in.readLine());
+                        continue;
+                    }
+                }
+                else if(command.equalsIgnoreCase("delete")){
+                    int threadSize = Integer.parseInt(in.readLine());
+                    if(threadSize == 0){
+                        System.out.println("No threads found, try adding one!");
+                    }
+                    else{
+                        System.out.println("Choose one to delete below");
+
+                        System.out.println("\n--- Open Threads ---\n");
+                        for(int j = 0; j < threadSize; j++){
+                            System.out.println(in.readLine());
+                        }
+                        System.out.print("\n");
+                        command = userInput.readLine(); // sending index
+                        out.println(command);  // showing index
+
+                        System.out.println(in.readLine());
+                        continue;
+                    }
                 }
                 else{
                     System.out.println(in.readLine());
